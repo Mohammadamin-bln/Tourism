@@ -1,24 +1,28 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Tourism.Entitiy.Dto;
+using Tourism.Dto;
 using Tourism.Services;
 
 namespace Tourism.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("")]
     [ApiController]
     public class UsersController : ControllerBase
     {
-        private readonly UserServices _userService;
+        private readonly IUserService _userService;
         private readonly IMapper _mapper;
 
-        public UsersController(UserServices userService, IMapper mapper)
+        // Constructor now expects IUserService
+        public UsersController(IUserService userService, IMapper mapper)
         {
             _userService = userService;
             _mapper = mapper;
         }
-        [HttpPost]
+
+        // Register
+        [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
             var success = await _userService.RegisterAsync(registerDto);
@@ -28,29 +32,26 @@ namespace Tourism.Controllers
 
             return Ok("Registration successful");
         }
-
-        // Login chek
-        [HttpPost("login")]
+        [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDto loginDto)
         {
-            var success = await _userService.LoginAsync(loginDto);
+            var token = await _userService.LoginAsync(loginDto);
 
-            if (!success)
+            if (token == null)
                 return Unauthorized("Invalid credentials");
 
-            return Ok("Login successful");
+            return Ok(new { Token = token });
         }
-
-        // get user by name
-        [HttpGet("user/{username}")]
-        public async Task<IActionResult> GetUserByUsername(string username)
+        [Authorize]
+        [HttpPut("Edit")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateProfileDto)
         {
-            var userDto = await _userService.GetUserByUsernameAsync(username);
-
-            if (userDto == null)
-                return NotFound("User not found");
-
-            return Ok(userDto);
+            var username = User.Identity.Name;
+            var success= await _userService.UpdateProfileAsync(username, updateProfileDto);
+            if (!success)
+                return BadRequest("could not update profile. please check your data");
+            return Ok("Profile updated successfully");
         }
+
     }
 }

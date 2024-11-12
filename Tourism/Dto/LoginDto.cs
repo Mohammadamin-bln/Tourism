@@ -1,4 +1,4 @@
-﻿namespace Tourism.Entitiy.Dto
+﻿namespace Tourism.Dto
 {
     public class LoginDto
     {

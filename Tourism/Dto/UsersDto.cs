@@ -1,9 +1,9 @@
-﻿namespace Tourism.Entitiy.Dto
+﻿namespace Tourism.Dto
 {
-    public class RegisterDto
+    public class UsersDto
     {
+        public string UserRole { get; set; }
         public string Username { get; set; }
         public string PhoneNumber { get; set; }
-        public string Password { get; set; }
     }
 }

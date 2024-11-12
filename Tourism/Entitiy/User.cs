@@ -1,4 +1,4 @@
-﻿namespace Tourism.Data
+﻿namespace Tourism.Entitiy
 {
     public class User
     {

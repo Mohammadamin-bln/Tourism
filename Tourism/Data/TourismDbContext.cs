@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Tourism.Entitiy.Dto;
+using Tourism.Entitiy;
+
 
 namespace Tourism.Data
 {
