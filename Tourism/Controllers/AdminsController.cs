@@ -50,6 +50,7 @@ namespace Tourism.Controllers
             return Ok(pendingArticles);
         }
 
+
         [Authorize(Roles ="Admin")]
         [HttpPost("Confirm/{articleId}")]
         public async Task<IActionResult> ApproveArticle(int articleId, [FromBody] bool isApproved)
@@ -61,6 +62,18 @@ namespace Tourism.Controllers
                     return BadRequest("Could not approve the article. Please try again.");
 
                 return Ok("Article approval status updated successfully.");
-            }
         }
+        [Authorize(Roles ="Admin")]
+        [HttpDelete("delete/{articleId}")]
+        public async Task<IActionResult> DeleteArticle(int articleId)
+        {
+            var result=await _userService.DeleteArticleAsync(articleId);
+            if (!result)
+                return BadRequest("Coult not delete the article");
+
+            return Ok("Aticle deleted successfully");
+
+        }
+    }
+    
     }

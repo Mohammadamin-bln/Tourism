@@ -12,5 +12,6 @@ namespace Tourism.Services
 
         Task<bool> SubmitArticleAsync(string username, ArticleDto articleDto);
         Task<bool> ApproveArticleAsync(int articleId, bool isApproved);
+        Task<bool> DeleteArticleAsync(int articleId);
     }
 }

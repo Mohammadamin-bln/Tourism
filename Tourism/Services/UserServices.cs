@@ -34,25 +34,29 @@ namespace Tourism.Services
         // ARTICLES
         public async Task<bool> SubmitArticleAsync(string username, ArticleDto articleDto)
         {
+            
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Username == username);
 
             if (user == null)
                 return false;
 
+            
             var cityName = Enum.GetName(typeof(Cities), articleDto.CityId);
 
             if (cityName == null)
                 return false;
 
-            var photoUrl = await SavePhotoAsync(articleDto.Photo);
+            
+            var photoUrls = await SavePhotosAsync(articleDto.Photos);
 
+            
             var article = _mapper.Map<UserArticle>(articleDto);
 
             article.UserId = user.Id;
-            article.PhotoUrl = photoUrl;
+            article.PhotoUrl = string.Join(";", photoUrls); 
 
-            // Save the article to the database
+            
             await _context.Articles.AddAsync(article);
             await _context.SaveChangesAsync();
 
@@ -100,6 +104,17 @@ namespace Tourism.Services
             await _context.SaveChangesAsync();
             return true;
         }
+        public async Task<bool> DeleteArticleAsync(int articleId)
+        {
+            var article=await _context.Articles
+                .FirstOrDefaultAsync(a=> a.Id==articleId);
+            if (article==null) 
+                return false;
+            _context.Articles.Remove(article);
+            await _context.SaveChangesAsync();
+            return true;
+
+        }
 
         //login service
         public async Task<string> LoginAsync(LoginDto loginDto)
@@ -119,7 +134,7 @@ namespace Tourism.Services
         //editing profile 
         public async Task<bool> UpdateProfileAsync(string username, UpdateProfileDto updateProfileDto)
         {
-            var user = await _context.Users
+            var user = await _context.Users 
                 .FirstOrDefaultAsync(u => u.Username == username);
             //if username  not exists
             if (user == null)
@@ -203,29 +218,29 @@ namespace Tourism.Services
             var hash = BCrypt.Net.BCrypt.HashPassword(password, salt);
             return hash;
         }
-        private async Task<string> SavePhotoAsync(IFormFile photo)
+        private async Task<List<string>> SavePhotosAsync(List<IFormFile> photos)
         {
-            // Check if the photo exists
-            if (photo == null || photo.Length == 0)
-                return null;
 
-            // Ensure the upload directory exists
-            var directoryPath = Path.Combine("uploads", "photos");
-            if (!Directory.Exists(directoryPath))
+            var photoUrls=new List<string>();
+
+            var directorypath = Path.Combine("uploads", "photos");
+            if (!Directory.Exists(directorypath))
             {
-                Directory.CreateDirectory(directoryPath);
+                Directory.CreateDirectory(directorypath);
             }
-
-            // Create a unique file name and save the photo
-            var filePath = Path.Combine(directoryPath, Guid.NewGuid().ToString() + Path.GetExtension(photo.FileName));
-
-            // Save the photo
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            foreach(var photo in photos)
             {
-                await photo.CopyToAsync(stream);
+                if (photo != null && photo.Length > 0)
+                {
+                    var filePath=Path.Combine(directorypath,Guid.NewGuid().ToString() + Path.GetExtension(photo.FileName));
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await photo.CopyToAsync(stream);
+                    }
+                    photoUrls.Add(filePath);
+                }
             }
-
-            return filePath;
+            return photoUrls;
         }
     }
 }
