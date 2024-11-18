@@ -5,25 +5,25 @@
 namespace Tourism.Migrations
 {
     /// <inheritdoc />
-    public partial class AddCityToUserArticle : Migration
+    public partial class AddPhotoToTicket : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "City",
-                table: "Articles",
-                type: "int",
+            migrationBuilder.AddColumn<string>(
+                name: "FilePath",
+                table: "Tickets",
+                type: "nvarchar(max)",
                 nullable: false,
-                defaultValue: 0);
+                defaultValue: "");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "City",
-                table: "Articles");
+                name: "FilePath",
+                table: "Tickets");
         }
     }
 }

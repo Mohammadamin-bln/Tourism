@@ -14,6 +14,8 @@ namespace Tourism.Data
 
         public DbSet<UserArticle> Articles { get; set; }
 
+        public DbSet<UserTicket> Tickets { get; set; }
+
     }
 
  

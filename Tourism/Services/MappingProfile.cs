@@ -27,6 +27,9 @@ namespace Tourism.Services
             .ForMember(dest => dest.UserId, opt => opt.Ignore())
             .ForMember(dest => dest.City, opt => opt.MapFrom(src => (Cities)src.CityId))
             .ForMember(dest => dest.Topic, opt => opt.MapFrom(src => Enum.GetName(typeof(ArticleTopic), src.TopicId)));
+
+            CreateMap<TicketDto, UserTicket>()
+                .ForMember(dest => dest.FilePath, opt => opt.Ignore());
         }
     }
 }

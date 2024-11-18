@@ -241,6 +241,13 @@ namespace Tourism.Services
                 }
             }
             return photoUrls;
+
+        }
+        private async  Task<string> SaveTicketPhotoAsync(IFormFile photo)
+        {
+            if (photo == null || photo.Length == 0)
+                return null;
+            var directoryPath=Path.Combine("uploads","Ticket_photos"
         }
     }
 }
