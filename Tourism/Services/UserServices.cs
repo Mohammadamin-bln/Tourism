@@ -34,34 +34,63 @@ namespace Tourism.Services
         // ARTICLES
         public async Task<bool> SubmitArticleAsync(string username, ArticleDto articleDto)
         {
-            
+
             var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Username == username);
 
             if (user == null)
                 return false;
 
-            
+
             var cityName = Enum.GetName(typeof(Cities), articleDto.CityId);
 
             if (cityName == null)
                 return false;
 
-            
+
             var photoUrls = await SavePhotosAsync(articleDto.Photos);
 
-            
+
             var article = _mapper.Map<UserArticle>(articleDto);
 
             article.UserId = user.Id;
-            article.PhotoUrl = string.Join(";", photoUrls); 
+            article.PhotoUrl = string.Join(";", photoUrls);
 
-            
+
             await _context.Articles.AddAsync(article);
             await _context.SaveChangesAsync();
 
             return true;
         }
+        public async Task<bool> TicketSubmitAsync(string username, TicketDto ticketDto)
+        {
+            var user = await _context.Users
+                .SingleOrDefaultAsync(u => u.Username == username);
+
+            if (user == null)
+                return false;
+            var userTicket = _mapper.Map<UserTicket>(ticketDto);
+            
+
+            userTicket.UserId = user.Id;
+            userTicket.CreatedAt = DateTime.UtcNow;
+            userTicket.IsOpen = true;
+
+            if (ticketDto != null)
+            {
+                var photoUrl = await SaveTicketPhotoAsync(ticketDto.Photo);
+                if (photoUrl != null)
+                {
+                    userTicket.FilePath = photoUrl;
+                }
+            }
+            await _context.Tickets.AddAsync(userTicket);
+            await _context.SaveChangesAsync();
+            return true;
+
+
+        }
+
         //register service
         public async Task<bool> RegisterAsync(RegisterDto registerDto)
         {
@@ -93,22 +122,31 @@ namespace Tourism.Services
             return true;
         }
 
-        public async Task<bool> ApproveArticleAsync(int articleId,bool isApproved)
+        public async Task<bool> ApproveArticleAsync(int articleId, bool isApproved)
         {
-            var article= await _context.Articles
-                .FirstOrDefaultAsync(a=> a.Id==articleId);
-            if (article==null) 
+            var article = await _context.Articles
+                .FirstOrDefaultAsync(a => a.Id == articleId);
+            if (article == null)
                 return false;
             article.IsApproved = isApproved;
 
             await _context.SaveChangesAsync();
             return true;
         }
+
+        //public async Task<bool> AdminTicketAnswerAsync(int ticketId,bool isOpen)
+        //{
+        //    var ticket= await _context.Tickets
+        //        .FirstOrDefaultAsync(a=>a.Id == ticketId);
+        //    if(ticket == null)
+        //        return false ;
+        //    ticket.IsOpen = false;
+        //}
         public async Task<bool> DeleteArticleAsync(int articleId)
         {
-            var article=await _context.Articles
-                .FirstOrDefaultAsync(a=> a.Id==articleId);
-            if (article==null) 
+            var article = await _context.Articles
+                .FirstOrDefaultAsync(a => a.Id == articleId);
+            if (article == null)
                 return false;
             _context.Articles.Remove(article);
             await _context.SaveChangesAsync();
@@ -134,7 +172,7 @@ namespace Tourism.Services
         //editing profile 
         public async Task<bool> UpdateProfileAsync(string username, UpdateProfileDto updateProfileDto)
         {
-            var user = await _context.Users 
+            var user = await _context.Users
                 .FirstOrDefaultAsync(u => u.Username == username);
             //if username  not exists
             if (user == null)
@@ -177,9 +215,9 @@ namespace Tourism.Services
         {
             var claims = new[]
             {
-        new Claim(ClaimTypes.Name, user.Username), 
-        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), 
-        new Claim(ClaimTypes.Role, user.UserRole) 
+        new Claim(ClaimTypes.Name, user.Username),
+        new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+        new Claim(ClaimTypes.Role, user.UserRole)
     };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"]));
@@ -221,18 +259,18 @@ namespace Tourism.Services
         private async Task<List<string>> SavePhotosAsync(List<IFormFile> photos)
         {
 
-            var photoUrls=new List<string>();
+            var photoUrls = new List<string>();
 
             var directorypath = Path.Combine("uploads", "photos");
             if (!Directory.Exists(directorypath))
             {
                 Directory.CreateDirectory(directorypath);
             }
-            foreach(var photo in photos)
+            foreach (var photo in photos)
             {
                 if (photo != null && photo.Length > 0)
                 {
-                    var filePath=Path.Combine(directorypath,Guid.NewGuid().ToString() + Path.GetExtension(photo.FileName));
+                    var filePath = Path.Combine(directorypath, Guid.NewGuid().ToString() + Path.GetExtension(photo.FileName));
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
                         await photo.CopyToAsync(stream);
@@ -243,11 +281,24 @@ namespace Tourism.Services
             return photoUrls;
 
         }
-        private async  Task<string> SaveTicketPhotoAsync(IFormFile photo)
+        private async Task<string> SaveTicketPhotoAsync(IFormFile photo)
         {
             if (photo == null || photo.Length == 0)
                 return null;
-            var directoryPath=Path.Combine("uploads","Ticket_photos"
+            var directoryPath = Path.Combine("uploads", "Ticket_photos");
+
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+
+            var filepath = Path.Combine(directoryPath, Guid.NewGuid().ToString() + Path.GetExtension(photo.FileName));
+
+            using (var stream = new FileStream(filepath, FileMode.Create))
+            {
+                await photo.CopyToAsync(stream);
+            }
+            return filepath;
         }
     }
 }

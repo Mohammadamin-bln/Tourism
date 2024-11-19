@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using Tourism.Dto;
 using Tourism.Services;
 using static Tourism.Enums.Enums;
@@ -88,6 +89,27 @@ namespace Tourism.Controllers
 
             return Ok(topics);
         }
+
+        [Authorize]
+        [HttpPost("SubmitTicket")]
+        public async Task<IActionResult> SubmitTicket([FromForm] TicketDto ticket)
+        {
+            var username = User.FindFirstValue(ClaimTypes.Name);
+
+            if(string.IsNullOrEmpty(username)) 
+                return Unauthorized("User is not authenticated.");
+
+            
+
+            var result = await _userService.TicketSubmitAsync(username, ticket);
+            if (!result)
+                return BadRequest("could not submit ticket");
+            return Ok("Ticket Submitted successfully");
+        }
+
+
+
+        
 
     }
 }

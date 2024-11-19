@@ -50,6 +50,18 @@ namespace Tourism.Controllers
             return Ok(pendingArticles);
         }
 
+        [Authorize(Roles ="Admin")]
+        [HttpGet("User/Tickets")]
+        public async Task<IActionResult> GetPendingTickets()
+        {
+            var pendingTickets=await _context.Tickets
+                .Where(a=>a.IsOpen==true)
+                .ToListAsync();
+            if (pendingTickets.Count == 0)
+                return NotFound("Not found any tickets");
+            return Ok(pendingTickets);
+        }
+
 
         [Authorize(Roles ="Admin")]
         [HttpPost("Confirm/{articleId}")]
