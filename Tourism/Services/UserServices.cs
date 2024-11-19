@@ -62,19 +62,19 @@ namespace Tourism.Services
 
             return true;
         }
-        public async Task<bool> TicketSubmitAsync(string username, TicketDto ticketDto)
+        public async Task<int?> TicketSubmitAsync(string username, TicketDto ticketDto)
         {
             var user = await _context.Users
                 .SingleOrDefaultAsync(u => u.Username == username);
 
             if (user == null)
-                return false;
-            var userTicket = _mapper.Map<UserTicket>(ticketDto);
-            
+                return null;
 
+            var userTicket = _mapper.Map<UserTicket>(ticketDto);
             userTicket.UserId = user.Id;
             userTicket.CreatedAt = DateTime.UtcNow;
             userTicket.IsOpen = true;
+            userTicket.AdminResponse = "null";
 
             if (ticketDto != null)
             {
@@ -84,12 +84,43 @@ namespace Tourism.Services
                     userTicket.FilePath = photoUrl;
                 }
             }
+
             await _context.Tickets.AddAsync(userTicket);
             await _context.SaveChangesAsync();
-            return true;
 
-
+            // Return the ID of the created ticket
+            return userTicket.Id;
         }
+
+        public async Task<bool> RespondToTicketAsync(int ticketId, string adminRespond)
+        {
+            var ticket= await _context.Tickets
+                .SingleOrDefaultAsync(a=>a.Id == ticketId);
+
+            if(ticket == null)
+                return false;
+            if(!ticket.IsOpen) 
+                return false;
+
+            ticket.AdminResponse = adminRespond;
+
+            _context.Tickets.Update(ticket);
+            await _context.SaveChangesAsync();
+            return true;
+        }
+        public async Task<TicketDetailDto> GetTicketByIdAsync(int ticketId)
+        {
+            var ticket = await _context.Tickets
+                .Include(t => t.User) // Optionally include user details
+                .SingleOrDefaultAsync(t => t.Id == ticketId);
+
+            if (ticket == null)
+                return null;
+
+            // Map to a detailed DTO for viewing
+            return _mapper.Map<TicketDetailDto>(ticket);
+        }
+
 
         //register service
         public async Task<bool> RegisterAsync(RegisterDto registerDto)
@@ -134,14 +165,7 @@ namespace Tourism.Services
             return true;
         }
 
-        //public async Task<bool> AdminTicketAnswerAsync(int ticketId,bool isOpen)
-        //{
-        //    var ticket= await _context.Tickets
-        //        .FirstOrDefaultAsync(a=>a.Id == ticketId);
-        //    if(ticket == null)
-        //        return false ;
-        //    ticket.IsOpen = false;
-        //}
+
         public async Task<bool> DeleteArticleAsync(int articleId)
         {
             var article = await _context.Articles

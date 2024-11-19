@@ -30,6 +30,8 @@ namespace Tourism.Services
 
             CreateMap<TicketDto, UserTicket>()
                 .ForMember(dest => dest.FilePath, opt => opt.Ignore());
+
+            CreateMap<UserTicket, TicketDetailDto>();
         }
     }
 }

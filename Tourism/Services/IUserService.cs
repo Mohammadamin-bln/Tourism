@@ -13,8 +13,9 @@ namespace Tourism.Services
         Task<bool> SubmitArticleAsync(string username, ArticleDto articleDto);
         Task<bool> ApproveArticleAsync(int articleId, bool isApproved);
         Task<bool> DeleteArticleAsync(int articleId);
-        Task<bool> TicketSubmitAsync(string username, TicketDto ticketDto);
+        Task<int?> TicketSubmitAsync(string username, TicketDto ticketDto);
+        Task<bool> RespondToTicketAsync(int ticketId, string adminResponse);
 
-        //Task<bool> AdminTicketAnswerAsync(int TicketId, bool isOpen);
+        Task<TicketDetailDto> GetTicketByIdAsync(int ticketId);
     }
 }

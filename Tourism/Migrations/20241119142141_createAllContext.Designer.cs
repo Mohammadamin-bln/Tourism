@@ -12,8 +12,8 @@ using Tourism.Data;
 namespace Tourism.Migrations
 {
     [DbContext(typeof(TourismDbContext))]
-    [Migration("20241119090202_Changedsomthing")]
-    partial class Changedsomthing
+    [Migration("20241119142141_createAllContext")]
+    partial class createAllContext
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -99,6 +99,10 @@ namespace Tourism.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AdminResponse")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");

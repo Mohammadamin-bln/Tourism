@@ -91,25 +91,38 @@ namespace Tourism.Controllers
         }
 
         [Authorize]
-        [HttpPost("SubmitTicket")]
+        [HttpPost("SubmitNewTicket")]
         public async Task<IActionResult> SubmitTicket([FromForm] TicketDto ticket)
         {
             var username = User.FindFirstValue(ClaimTypes.Name);
 
-            if(string.IsNullOrEmpty(username)) 
+            if (string.IsNullOrEmpty(username))
                 return Unauthorized("User is not authenticated.");
 
-            
+            // Call the service and get the ticket ID
+            var ticketId = await _userService.TicketSubmitAsync(username, ticket);
 
-            var result = await _userService.TicketSubmitAsync(username, ticket);
-            if (!result)
-                return BadRequest("could not submit ticket");
-            return Ok("Ticket Submitted successfully");
+            if (ticketId == null)
+                return BadRequest("Could not submit ticket");
+
+            // Return the ticket ID in the response
+            return Ok(new { TicketId = ticketId });
+        }
+        [Authorize]
+        [HttpGet("MyTicket/{ticketId}")]
+        public async Task<IActionResult> GetTicket(int ticketId)
+        {
+            var ticketDto = await _userService.GetTicketByIdAsync(ticketId);
+
+            if (ticketDto == null)
+                return NotFound("Ticket not found.");
+
+            return Ok(ticketDto);
         }
 
 
 
-        
+
 
     }
 }
