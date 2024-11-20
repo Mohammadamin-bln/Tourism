@@ -62,6 +62,48 @@ namespace Tourism.Services
 
             return true;
         }
+        public async Task<bool> CloseTicketAsync(int ticketId)
+        {
+            var ticket = await _context.Tickets
+                .SingleOrDefaultAsync(t => t.Id == ticketId);
+
+            if (ticket == null)
+                return false;  
+
+            
+            if (ticket.Status == TicketStatus.Closed)
+                return false;  
+
+            
+            ticket.Status = TicketStatus.Closed;
+              
+            _context.Tickets.Update(ticket);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
+        public async Task<bool> TicketUpdateAsync(int ticketId, TicketUpdateDto ticketUpdateDto)
+        {
+            var ticket = await _context.Tickets
+                .SingleOrDefaultAsync(a => a.Id == ticketId);
+
+            if (ticket == null)
+                return false;
+
+            if (!string.IsNullOrEmpty(ticketUpdateDto.Description)) 
+            {
+                ticket.Description= ticketUpdateDto.Description;
+            }
+
+            ticket.UpdatedAt = DateTime.UtcNow;
+
+            _context.Tickets.Update(ticket);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
         public async Task<int?> TicketSubmitAsync(string username, TicketDto ticketDto)
         {
             var user = await _context.Users
@@ -73,7 +115,7 @@ namespace Tourism.Services
             var userTicket = _mapper.Map<UserTicket>(ticketDto);
             userTicket.UserId = user.Id;
             userTicket.CreatedAt = DateTime.UtcNow;
-            userTicket.IsOpen = true;
+            userTicket.Status = TicketStatus.WaitingForResponse; // Or the default starting status
             userTicket.AdminResponse = "null";
 
             if (ticketDto != null)
@@ -99,26 +141,32 @@ namespace Tourism.Services
 
             if(ticket == null)
                 return false;
-            if(!ticket.IsOpen) 
+            if (ticket.Status != TicketStatus.WaitingForResponse)
                 return false;
 
             ticket.AdminResponse = adminRespond;
+            ticket.Status= TicketStatus.Responded;
 
             _context.Tickets.Update(ticket);
             await _context.SaveChangesAsync();
             return true;
         }
-        public async Task<TicketDetailDto> GetTicketByIdAsync(int ticketId)
+        public async Task<List<TicketDetailDto>> GetUserTicketsAsync(string username)
         {
-            var ticket = await _context.Tickets
-                .Include(t => t.User) // Optionally include user details
-                .SingleOrDefaultAsync(t => t.Id == ticketId);
+            var user = await _context.Users
+                .SingleOrDefaultAsync(u => u.Username == username);
 
-            if (ticket == null)
+            if (user == null)
                 return null;
 
-            // Map to a detailed DTO for viewing
-            return _mapper.Map<TicketDetailDto>(ticket);
+            var tickets = await _context.Tickets
+                .Where(t => t.UserId == user.Id)
+                .ToListAsync();
+
+            
+            var ticketDtos = _mapper.Map<List<TicketDetailDto>>(tickets);
+
+            return ticketDtos;
         }
 
 

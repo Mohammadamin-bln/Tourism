@@ -13,6 +13,16 @@ namespace Tourism.Controllers
     [ApiController]
     public class UsersController : ControllerBase
     {
+        private string GetTicketStatusName(TicketStatus status)
+        {
+            return status switch
+            {
+                TicketStatus.WaitingForResponse => "Waiting for Response",
+                TicketStatus.Responded => "Responded",
+                TicketStatus.Closed => "Closed",
+                _ => "Unknown Status"
+            };
+        }
 
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
@@ -109,15 +119,39 @@ namespace Tourism.Controllers
             return Ok(new { TicketId = ticketId });
         }
         [Authorize]
-        [HttpGet("MyTicket/{ticketId}")]
-        public async Task<IActionResult> GetTicket(int ticketId)
+        [HttpGet("MyTickets")]
+        public async Task<IActionResult> GetUserTickets()
         {
-            var ticketDto = await _userService.GetTicketByIdAsync(ticketId);
+            var username = User.Identity.Name;
 
-            if (ticketDto == null)
-                return NotFound("Ticket not found.");
+            if (string.IsNullOrEmpty(username))
+                return Unauthorized("User is not authenticated.");
 
-            return Ok(ticketDto);
+            var tickets = await _userService.GetUserTicketsAsync(username);
+
+            if (tickets == null || !tickets.Any())
+                return NotFound("No tickets found for the user.");
+
+            // Add a human-readable status to each ticket before returning it
+            foreach (var ticket in tickets)
+            {
+                // Map the numeric status to a user-friendly status
+                ticket.StatusName = GetTicketStatusName(ticket.Status);
+            }
+
+            return Ok(tickets);
+        }
+
+        [Authorize]
+        [HttpPut("UpdateTicket/{ticketId}")]
+        public async Task<IActionResult> UpdateTicket(int ticketId, [FromBody] TicketUpdateDto ticketUpdateDto)
+        {
+            var success = await _userService.TicketUpdateAsync(ticketId, ticketUpdateDto);
+
+            if (!success)
+                return BadRequest("Ticket could not be updated or does not exist.");
+
+            return Ok("Ticket updated successfully.");
         }
 
 

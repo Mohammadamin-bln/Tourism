@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Tourism.Data;
 using Tourism.Services;
+using static Tourism.Enums.Enums;
 
 namespace Tourism.Controllers
 {
@@ -55,10 +56,12 @@ namespace Tourism.Controllers
         public async Task<IActionResult> GetPendingTickets()
         {
             var pendingTickets = await _context.Tickets
-                .Where(a => a.IsOpen == true)
+                .Where(a => a.Status == TicketStatus.WaitingForResponse) 
                 .ToListAsync();
+
             if (pendingTickets.Count == 0)
-                return NotFound("Not found any tickets");
+                return NotFound("No pending tickets found.");
+
             return Ok(pendingTickets);
         }
         [Authorize(Roles = "Admin")]
@@ -96,6 +99,17 @@ namespace Tourism.Controllers
 
             return Ok("Aticle deleted successfully");
 
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost("CloseTicket/{ticketId}")]
+        public async Task<IActionResult> CloseTicket(int ticketId)
+        {
+            var success = await _userService.CloseTicketAsync(ticketId);
+
+            if (!success)
+                return BadRequest("Ticket not found or is already closed.");
+
+            return Ok("Ticket has been closed successfully.");
         }
     }
     

@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using System.Net.Sockets;
 using Tourism.Dto;
 using Tourism.Entitiy;
 using static Tourism.Enums.Enums;
@@ -31,7 +32,9 @@ namespace Tourism.Services
             CreateMap<TicketDto, UserTicket>()
                 .ForMember(dest => dest.FilePath, opt => opt.Ignore());
 
-            CreateMap<UserTicket, TicketDetailDto>();
+
+            CreateMap<UserTicket, TicketDetailDto>()
+                    .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
         }
     }
 }

@@ -39,6 +39,13 @@ namespace Tourism.Enums
 
             Festivals = 10
         }
+        public enum TicketStatus
+        {
+            Open,             
+            WaitingForResponse=1, 
+            Responded=2,         
+            Closed =3            
+        }
     }
 }
         

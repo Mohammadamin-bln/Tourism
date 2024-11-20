@@ -16,6 +16,11 @@ namespace Tourism.Services
         Task<int?> TicketSubmitAsync(string username, TicketDto ticketDto);
         Task<bool> RespondToTicketAsync(int ticketId, string adminResponse);
 
-        Task<TicketDetailDto> GetTicketByIdAsync(int ticketId);
+        Task<List<TicketDetailDto>> GetUserTicketsAsync(string username);
+
+        Task<bool> TicketUpdateAsync(int ticketId, TicketUpdateDto ticketUpdateDto);
+        Task<bool> CloseTicketAsync(int ticketId);
+
+
     }
 }
