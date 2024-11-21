@@ -12,8 +12,8 @@ using Tourism.Data;
 namespace Tourism.Migrations
 {
     [DbContext(typeof(TourismDbContext))]
-    [Migration("20241120100219_UpdateTicketStatus")]
-    partial class UpdateTicketStatus
+    [Migration("20241121073049_everythingcreate")]
+    partial class everythingcreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

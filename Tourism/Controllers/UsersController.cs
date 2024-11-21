@@ -136,7 +136,7 @@ namespace Tourism.Controllers
             foreach (var ticket in tickets)
             {
                 // Map the numeric status to a user-friendly status
-                ticket.StatusName = GetTicketStatusName(ticket.Status);
+                ticket.StatusName= GetTicketStatusName(ticket.Status);
             }
 
             return Ok(tickets);
@@ -152,6 +152,18 @@ namespace Tourism.Controllers
                 return BadRequest("Ticket could not be updated or does not exist.");
 
             return Ok("Ticket updated successfully.");
+        }
+
+        [Authorize]
+        [HttpGet("Articles/SortBy")]
+        public async Task<IActionResult> GetSortedArticles([FromQuery] int? cityId, [FromQuery] int? topicId)
+        {
+            var articles = await _userService.GetSortedArticlesAsync(cityId, topicId);
+
+            if (articles == null || !articles.Any())
+                return NotFound("No articles found for the given criteria.");
+
+            return Ok(articles);
         }
 
 

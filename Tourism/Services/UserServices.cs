@@ -201,6 +201,33 @@ namespace Tourism.Services
             return true;
         }
 
+        public async Task<List<UserArticle>> GetSortedArticlesAsync(int? cityId, int? topicId)
+        {
+            var query = _context.Articles.AsQueryable();
+
+            if(cityId == null)
+            {
+                var cityName = Enum.GetName(typeof(Cities), cityId.Value);
+
+                if (cityName == null)
+                    throw new ArgumentException("invalid City ID");
+
+                query = query.Where(ua=>ua.City==cityName);
+            }
+
+            if ( topicId == null)
+            {
+                var topicName=Enum.GetName(typeof(ArticleTopic), topicId.Value);
+                if (topicName == null)
+                    throw new ArgumentException("Invalid topic ID");
+
+                query= query.Where(ua=>ua.Topic==topicName);
+            }
+
+            return await query.ToListAsync();
+        
+        }
+
         public async Task<bool> ApproveArticleAsync(int articleId, bool isApproved)
         {
             var article = await _context.Articles

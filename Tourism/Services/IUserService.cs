@@ -1,4 +1,5 @@
 ﻿using Tourism.Dto;
+using Tourism.Entitiy;
 
 namespace Tourism.Services
 {
@@ -20,6 +21,9 @@ namespace Tourism.Services
 
         Task<bool> TicketUpdateAsync(int ticketId, TicketUpdateDto ticketUpdateDto);
         Task<bool> CloseTicketAsync(int ticketId);
+        Task<List<UserArticle>> GetSortedArticlesAsync(int? cityId, int? topicId);
+
+
 
 
     }
