@@ -35,26 +35,7 @@ namespace Tourism.Controllers
         }
 
         // Register
-        [HttpPost("SingUp")]
-        public async Task<IActionResult> Register(RegisterDto registerDto)
-        {
-            var success = await _userService.RegisterAsync(registerDto);
 
-            if (!success)
-                return BadRequest("User already exists");
-
-            return Ok("Registration successful");
-        }
-        [HttpPost("SingIn")]
-        public async Task<IActionResult> Login(LoginDto loginDto)
-        {
-            var token = await _userService.LoginAsync(loginDto);
-
-            if (token == null)
-                return Unauthorized("Invalid credentials");
-
-            return Ok(new { Token = token });
-        }
         [Authorize]
         [HttpPut("Edit/profile")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto updateProfileDto)
@@ -66,7 +47,7 @@ namespace Tourism.Controllers
             return Ok("Profile updated successfully");
         }
         [Authorize]
-        [HttpPost("Article")]
+        [HttpPost("Article/new")]
         public async Task<IActionResult> SubmitArticle([FromForm] ArticleDto articleDto)
         {
             var username = User.Identity.Name;
@@ -79,7 +60,7 @@ namespace Tourism.Controllers
             return Ok("Article submitted successfully");
         
         }
-        [HttpGet("Cities")]
+        [HttpGet("GetCities")]
         public IActionResult GetCities()
         {
             var cities = Enum.GetValues(typeof(Cities))  
@@ -101,7 +82,7 @@ namespace Tourism.Controllers
         }
 
         [Authorize]
-        [HttpPost("SubmitNewTicket")]
+        [HttpPost("Submit/NewTicket")]
         public async Task<IActionResult> SubmitTicket([FromForm] TicketDto ticket)
         {
             var username = User.FindFirstValue(ClaimTypes.Name);
