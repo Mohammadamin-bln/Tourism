@@ -4,8 +4,10 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Security.Claims;
 using System.Text;
-using Tourism.Data;
-using Tourism.Services;
+using Tourism.Application.Mapping;
+using Tourism.Application.Services;
+using Tourism.Infrastructure.Data;
+using Tourism.Infrastructure.Repositories;
 
 
 var builder = WebApplication.CreateBuilder(args);

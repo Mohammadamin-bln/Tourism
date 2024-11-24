@@ -3,7 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tourism", "Tourism\Tourism.csproj", "{24968EC7-035C-4519-95A9-0C36FD4D20D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tourism", "Tourism\Tourism.csproj", "{24968EC7-035C-4519-95A9-0C36FD4D20D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tourism.Core", "Tourism.Core\Tourism.Core.csproj", "{8E853898-B7DC-4E44-A3A5-2236D95BCA7C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tourism.Application", "Tourism.Application\Tourism.Application.csproj", "{9271B007-D186-45A2-9F26-4EB476CD4CEA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tourism.Infrastructure", "Tourism.Infrastructure\Tourism.Infrastructure.csproj", "{9595FE48-7264-46C2-822F-9817DB328CF0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tourism.Presentation", "Tourism.Presentation\Tourism.Presentation.csproj", "{9594572F-524F-4CE8-A7FD-8A3B00ABFFB4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +23,22 @@ Global
 		{24968EC7-035C-4519-95A9-0C36FD4D20D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{24968EC7-035C-4519-95A9-0C36FD4D20D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{24968EC7-035C-4519-95A9-0C36FD4D20D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E853898-B7DC-4E44-A3A5-2236D95BCA7C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E853898-B7DC-4E44-A3A5-2236D95BCA7C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E853898-B7DC-4E44-A3A5-2236D95BCA7C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E853898-B7DC-4E44-A3A5-2236D95BCA7C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9271B007-D186-45A2-9F26-4EB476CD4CEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9271B007-D186-45A2-9F26-4EB476CD4CEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9271B007-D186-45A2-9F26-4EB476CD4CEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9271B007-D186-45A2-9F26-4EB476CD4CEA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9595FE48-7264-46C2-822F-9817DB328CF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9595FE48-7264-46C2-822F-9817DB328CF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9595FE48-7264-46C2-822F-9817DB328CF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9595FE48-7264-46C2-822F-9817DB328CF0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9594572F-524F-4CE8-A7FD-8A3B00ABFFB4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9594572F-524F-4CE8-A7FD-8A3B00ABFFB4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9594572F-524F-4CE8-A7FD-8A3B00ABFFB4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9594572F-524F-4CE8-A7FD-8A3B00ABFFB4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
