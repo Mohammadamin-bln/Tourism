@@ -1,4 +1,6 @@
-﻿namespace Tourism.Application.Dto
+﻿using Microsoft.AspNetCore.Http;
+
+namespace Tourism.Application.Dto
 {
     public class TicketDto
     {

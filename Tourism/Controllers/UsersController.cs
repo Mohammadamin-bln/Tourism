@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using Tourism.Application.Dto;
+using Tourism.Application.Features.Commands.UserTickets;
 using Tourism.Infrastructure.Repositories;
 using static Tourism.Core.Enums.Enums;
 
@@ -26,12 +28,14 @@ namespace Tourism.Controllers
 
         private readonly IUserService _userService;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
         //interface config
-        public UsersController(IUserService userService, IMapper mapper)
+        public UsersController(IUserService userService, IMapper mapper, IMediator mediator)
         {
             _userService = userService;
             _mapper = mapper;
+            _mediator = mediator;
         }
 
         // Register
@@ -90,14 +94,15 @@ namespace Tourism.Controllers
             if (string.IsNullOrEmpty(username))
                 return Unauthorized("User is not authenticated.");
 
-            // Call the service and get the ticket ID
-            var ticketId = await _userService.TicketSubmitAsync(username, ticket);
+
+            var command =  new TicketSubmitCommand(username, ticket);
+            var ticketId=  await _mediator.Send(command);
 
             if (ticketId == null)
-                return BadRequest("Could not submit ticket");
-
-            // Return the ticket ID in the response
+                return BadRequest("could not submit ");
             return Ok(new { TicketId = ticketId });
+
+
         }
         [Authorize]
         [HttpGet("MyTickets")]

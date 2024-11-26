@@ -8,6 +8,9 @@ using Tourism.Application.Mapping;
 using Tourism.Application.Services;
 using Tourism.Infrastructure.Data;
 using Tourism.Infrastructure.Repositories;
+using MediatR;
+using Tourism.Application.Features.Commands.Register;
+using Microsoft.Extensions.DependencyInjection;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -42,6 +45,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // Register AutoMapper profiles
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(typeof(RegisterCommand).Assembly));
 
 
 // Add other services like controllers, Swagger, etc.
