@@ -29,10 +29,7 @@ namespace Tourism.Application.Services
 
         public UserServices(TourismDbContext context, IMapper mapper, IConfiguration configuration)
         {
-            _context = context;
-            _mapper = mapper;
-            _configuration = configuration;
-
+        
         }
         // ARTICLES
         public async Task<bool> SubmitArticleAsync(string username, ArticleDto articleDto)
